@@ -15,16 +15,21 @@ function emitirToken(user) {
   )
 }
 
+// Normaliza el email para que la unicidad sea EXACTA (case-insensitive):
+// "Foo@X.com " y "foo@x.com" cuentan como el mismo.
+const normalizarEmail = (email) => String(email || '').toLowerCase().trim()
+
 // POST /api/auth/register — crea un jugador y lo deja logueado (devuelve token).
-// El schema ya descartó cualquier campo de más (p. ej. admin), así que acá
-// solo llegan name/email/password.
+// El schema ya descartó campos de más (p. ej. admin); solo llegan name/email/password.
 async function register(req, res) {
-  const { name, email, password } = req.body
+  const { name, password } = req.body
+  const email = normalizarEmail(req.body.email)
   try {
     const user = await User.create({ name, email, password })
     const token = emitirToken(user)
     res.status(201).json({ token, user: user.toJSON() })
   } catch (err) {
+    // Índice único de email: no se pueden crear dos cuentas con el mismo mail.
     if (err.code === 11000) {
       return res.status(409).json({ error: 'Ya existe un usuario con ese email' })
     }
@@ -34,7 +39,8 @@ async function register(req, res) {
 
 // POST /api/auth/login — valida credenciales y devuelve el JWT.
 async function login(req, res) {
-  const { email, password } = req.body
+  const { password } = req.body
+  const email = normalizarEmail(req.body.email)
   // La password tiene select:false en el modelo, hay que pedirla explícito.
   const user = await User.findOne({ email }).select('+password')
   if (!user) {
@@ -52,8 +58,7 @@ async function login(req, res) {
   res.json({ token, user: user.toJSON() })
 }
 
-// GET /api/auth/me — devuelve el usuario del token (sirve para rehidratar
-// la sesión en el arranque de la app a partir del token guardado).
+// GET /api/auth/me — devuelve el usuario del token (rehidratar sesión).
 async function me(req, res) {
   res.json(req.user.toJSON())
 }
