@@ -1,13 +1,19 @@
 const User = require('../models/User')
 const { REGLAS } = require('./puntaje')
 
-// Arma el ranking con una agregación de Mongo (Unidad 5). Arranca de los
-// usuarios y les engancha sus pronósticos, así aparecen TODOS los jugadores
-// aunque todavía no tengan puntos. `puntos` suma los pronósticos ya
-// resueltos (los pendientes tienen puntos=null y $sum los ignora).
+// Arma el ranking con una agregación de Mongo (Unidad 5). Si se pasa `userIds`,
+// lo limita a esos usuarios (ranking de una LIGA); si no, es el ranking general.
+// `puntos` suma los pronósticos resueltos (los pendientes tienen puntos=null y
+// $sum los ignora). Solo expone name/profilePic/puntos/exactos (nada sensible).
 
-async function obtenerRanking() {
-  return User.aggregate([
+async function obtenerRanking(userIds = null) {
+  const pipeline = []
+
+  if (userIds && userIds.length) {
+    pipeline.push({ $match: { _id: { $in: userIds } } })
+  }
+
+  pipeline.push(
     {
       $lookup: {
         from: 'pronosticos',
@@ -33,8 +39,10 @@ async function obtenerRanking() {
         },
       },
     },
-    { $sort: { puntos: -1, exactos: -1, name: 1 } },
-  ])
+    { $sort: { puntos: -1, exactos: -1, name: 1 } }
+  )
+
+  return User.aggregate(pipeline)
 }
 
 module.exports = { obtenerRanking }

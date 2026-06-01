@@ -25,7 +25,6 @@ const loginSchema = z.object({
 // --- Equipos (admin) ------------------------------------------------------
 const crearEquipoSchema = z.object({
   nombre: z.string().min(2).max(60),
-  // ISO alpha-2 (ar, br, mx) o casos compuestos tipo gb-eng.
   codigoPais: z
     .string()
     .regex(/^[a-z]{2}(-[a-z]{2,3})?$/i, 'código de país inválido (ej: ar, br, gb-eng)'),
@@ -37,7 +36,7 @@ const crearPartidoSchema = z
   .object({
     equipoLocal: objectId,
     equipoVisitante: objectId,
-    fecha: z.coerce.date(), // acepta ISO string y lo convierte a Date
+    fecha: z.coerce.date(),
     fase: z.enum(FASES).optional(),
   })
   .refine((d) => d.equipoLocal !== d.equipoVisitante, {
@@ -57,6 +56,15 @@ const pronosticoSchema = z.object({
   golesVisitante: goles,
 })
 
+// --- Ligas ----------------------------------------------------------------
+const crearLigaSchema = z.object({
+  nombre: z.string().min(2).max(60),
+})
+
+const unirseLigaSchema = z.object({
+  codigo: z.string().trim().min(4).max(20),
+})
+
 module.exports = {
   registerSchema,
   loginSchema,
@@ -64,4 +72,6 @@ module.exports = {
   crearPartidoSchema,
   resultadoSchema,
   pronosticoSchema,
+  crearLigaSchema,
+  unirseLigaSchema,
 }

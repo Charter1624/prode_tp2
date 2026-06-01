@@ -22,7 +22,7 @@ app.use(
 app.use(express.json({ limit: '1mb' }))
 app.use(mongoSanitize())
 
-// Rate limit general (además del más estricto en /auth)
+// Rate limit general (además del más estricto en /auth y /ligas/unirse)
 app.use(
   rateLimit({
     windowMs: 60 * 1000,
@@ -39,11 +39,11 @@ app.use('/api/equipos', require('./routes/equipos'))
 app.use('/api/partidos', require('./routes/partidos'))
 app.use('/api/pronosticos', require('./routes/pronosticos'))
 app.use('/api/ranking', require('./routes/ranking'))
+app.use('/api/ligas', require('./routes/ligas'))
 
 // Error handler central. Va al final, con los 4 argumentos (err, req, res, next)
 // para que Express lo reconozca como manejador de errores.
 app.use((err, req, res, _next) => {
-  // Body JSON mal formado (lo tira express.json)
   if (err.type === 'entity.parse.failed') {
     return res.status(400).json({ error: 'JSON inválido en el body' })
   }
