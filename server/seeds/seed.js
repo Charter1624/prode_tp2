@@ -68,6 +68,18 @@ async function seed() {
   const partidos = await Partido.create(partidosDocs)
   logger.info(`Creados ${partidos.length} partidos (fase de grupos)`)
 
+  // 2b. Eliminatorias (con slots; los equipos quedan TBD hasta resolverse).
+  const koDocs = fixture.eliminatorias.map((k) => ({
+    numero: k.numero,
+    fase: k.fase,
+    fecha: new Date(k.fecha),
+    slotLocal: k.slotLocal,
+    slotVisitante: k.slotVisitante,
+    estado: 'pendiente',
+  }))
+  await Partido.create(koDocs)
+  logger.info(`Creados ${koDocs.length} partidos de eliminatorias (cuadro)`)
+
   // 3. Usuarios (la password se hashea sola en el pre-save del modelo).
   const usuarios = []
   for (const u of USUARIOS) {

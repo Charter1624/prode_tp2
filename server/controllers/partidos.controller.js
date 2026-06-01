@@ -3,11 +3,11 @@ const Equipo = require('../models/Equipo')
 const Partido = require('../models/Partido')
 const Pronostico = require('../models/Pronostico')
 const { calcularPuntos } = require('../services/puntaje')
+const { resolverBracket } = require('../services/bracket')
 
 // Lógica de partidos. Las rutas wirean estos handlers con su middleware
 // (auth + soloAdmin + validación) según corresponda.
 
-// Equipos a "poblar" en las respuestas (para que la app muestre nombre + bandera).
 const POP_EQUIPOS = [
   { path: 'equipoLocal', select: 'nombre codigoPais grupo' },
   { path: 'equipoVisitante', select: 'nombre codigoPais grupo' },
@@ -15,9 +15,10 @@ const POP_EQUIPOS = [
 
 // GET /api/partidos — lista pública. Filtro opcional ?estado=pendiente|jugado.
 async function listar(req, res) {
-  const { estado } = req.query
+  const { estado, fase } = req.query
   const query = {}
   if (estado) query.estado = estado
+  if (fase) query.fase = fase
 
   const partidos = await Partido.find(query).populate(POP_EQUIPOS).sort({ fecha: 1 })
   res.json(partidos)
@@ -41,8 +42,8 @@ async function crear(req, res) {
 }
 
 // PUT /api/partidos/:id/resultado — el admin carga el marcador real.
-// Marca el partido como jugado y recalcula los puntos de TODOS sus
-// pronósticos (idempotente: si corrige el resultado, se recalcula bien).
+// Marca el partido como jugado, recalcula los puntos de sus pronósticos, y
+// resuelve el cuadro de eliminatorias (1°/2° de grupo, avance de ganadores).
 async function cargarResultado(req, res) {
   const { id } = req.params
   if (!mongoose.isValidObjectId(id)) {
@@ -52,9 +53,12 @@ async function cargarResultado(req, res) {
   const partido = await Partido.findById(id)
   if (!partido) return res.status(404).json({ error: 'Partido no encontrado' })
 
-  // No tiene sentido cargar el resultado de un partido que todavía no se jugó.
   if (partido.fecha > new Date()) {
     return res.status(400).json({ error: 'El partido todavía no se jugó' })
+  }
+  // En eliminatorias no se puede cargar resultado hasta que los equipos estén definidos.
+  if (!partido.equipoLocal || !partido.equipoVisitante) {
+    return res.status(400).json({ error: 'El partido todavía no tiene los dos equipos definidos' })
   }
 
   const { golesLocal, golesVisitante } = req.body
@@ -70,11 +74,15 @@ async function cargarResultado(req, res) {
     await p.save()
   }
 
+  // Completa los equipos de las eliminatorias que ya se puedan resolver.
+  const slotsCompletados = await resolverBracket()
+
   await partido.populate(POP_EQUIPOS)
   res.json({
     mensaje: 'Resultado cargado',
     partido,
     pronosticosActualizados: pronosticos.length,
+    slotsCompletados,
   })
 }
 

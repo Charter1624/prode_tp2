@@ -747,5 +747,229 @@
       "grupo": "L",
       "fase": "grupos"
     }
+  ],
+  "eliminatorias": [
+    {
+      "numero": 73,
+      "fase": "dieciseisavos",
+      "fecha": "2026-06-28T19:00:00.000Z",
+      "slotLocal": "2A",
+      "slotVisitante": "2B"
+    },
+    {
+      "numero": 74,
+      "fase": "dieciseisavos",
+      "fecha": "2026-06-29T20:30:00.000Z",
+      "slotLocal": "1E",
+      "slotVisitante": "3A/B/C/D/F"
+    },
+    {
+      "numero": 75,
+      "fase": "dieciseisavos",
+      "fecha": "2026-06-30T01:00:00.000Z",
+      "slotLocal": "1F",
+      "slotVisitante": "2C"
+    },
+    {
+      "numero": 76,
+      "fase": "dieciseisavos",
+      "fecha": "2026-06-29T17:00:00.000Z",
+      "slotLocal": "1C",
+      "slotVisitante": "2F"
+    },
+    {
+      "numero": 77,
+      "fase": "dieciseisavos",
+      "fecha": "2026-06-30T21:00:00.000Z",
+      "slotLocal": "1I",
+      "slotVisitante": "3C/D/F/G/H"
+    },
+    {
+      "numero": 78,
+      "fase": "dieciseisavos",
+      "fecha": "2026-06-30T17:00:00.000Z",
+      "slotLocal": "2E",
+      "slotVisitante": "2I"
+    },
+    {
+      "numero": 79,
+      "fase": "dieciseisavos",
+      "fecha": "2026-07-01T01:00:00.000Z",
+      "slotLocal": "1A",
+      "slotVisitante": "3C/E/F/H/I"
+    },
+    {
+      "numero": 80,
+      "fase": "dieciseisavos",
+      "fecha": "2026-07-01T16:00:00.000Z",
+      "slotLocal": "1L",
+      "slotVisitante": "3E/H/I/J/K"
+    },
+    {
+      "numero": 81,
+      "fase": "dieciseisavos",
+      "fecha": "2026-07-02T00:00:00.000Z",
+      "slotLocal": "1D",
+      "slotVisitante": "3B/E/F/I/J"
+    },
+    {
+      "numero": 82,
+      "fase": "dieciseisavos",
+      "fecha": "2026-07-01T20:00:00.000Z",
+      "slotLocal": "1G",
+      "slotVisitante": "3A/E/H/I/J"
+    },
+    {
+      "numero": 83,
+      "fase": "dieciseisavos",
+      "fecha": "2026-07-02T23:00:00.000Z",
+      "slotLocal": "2K",
+      "slotVisitante": "2L"
+    },
+    {
+      "numero": 84,
+      "fase": "dieciseisavos",
+      "fecha": "2026-07-02T19:00:00.000Z",
+      "slotLocal": "1H",
+      "slotVisitante": "2J"
+    },
+    {
+      "numero": 85,
+      "fase": "dieciseisavos",
+      "fecha": "2026-07-03T03:00:00.000Z",
+      "slotLocal": "1B",
+      "slotVisitante": "3E/F/G/I/J"
+    },
+    {
+      "numero": 86,
+      "fase": "dieciseisavos",
+      "fecha": "2026-07-03T22:00:00.000Z",
+      "slotLocal": "1J",
+      "slotVisitante": "2H"
+    },
+    {
+      "numero": 87,
+      "fase": "dieciseisavos",
+      "fecha": "2026-07-04T01:30:00.000Z",
+      "slotLocal": "1K",
+      "slotVisitante": "3D/E/I/J/L"
+    },
+    {
+      "numero": 88,
+      "fase": "dieciseisavos",
+      "fecha": "2026-07-03T18:00:00.000Z",
+      "slotLocal": "2D",
+      "slotVisitante": "2G"
+    },
+    {
+      "numero": 89,
+      "fase": "octavos",
+      "fecha": "2026-07-04T21:00:00.000Z",
+      "slotLocal": "W74",
+      "slotVisitante": "W77"
+    },
+    {
+      "numero": 90,
+      "fase": "octavos",
+      "fecha": "2026-07-04T17:00:00.000Z",
+      "slotLocal": "W73",
+      "slotVisitante": "W75"
+    },
+    {
+      "numero": 91,
+      "fase": "octavos",
+      "fecha": "2026-07-05T20:00:00.000Z",
+      "slotLocal": "W76",
+      "slotVisitante": "W78"
+    },
+    {
+      "numero": 92,
+      "fase": "octavos",
+      "fecha": "2026-07-06T00:00:00.000Z",
+      "slotLocal": "W79",
+      "slotVisitante": "W80"
+    },
+    {
+      "numero": 93,
+      "fase": "octavos",
+      "fecha": "2026-07-06T19:00:00.000Z",
+      "slotLocal": "W83",
+      "slotVisitante": "W84"
+    },
+    {
+      "numero": 94,
+      "fase": "octavos",
+      "fecha": "2026-07-07T00:00:00.000Z",
+      "slotLocal": "W81",
+      "slotVisitante": "W82"
+    },
+    {
+      "numero": 95,
+      "fase": "octavos",
+      "fecha": "2026-07-07T16:00:00.000Z",
+      "slotLocal": "W86",
+      "slotVisitante": "W88"
+    },
+    {
+      "numero": 96,
+      "fase": "octavos",
+      "fecha": "2026-07-07T20:00:00.000Z",
+      "slotLocal": "W85",
+      "slotVisitante": "W87"
+    },
+    {
+      "numero": 97,
+      "fase": "cuartos",
+      "fecha": "2026-07-09T20:00:00.000Z",
+      "slotLocal": "W89",
+      "slotVisitante": "W90"
+    },
+    {
+      "numero": 98,
+      "fase": "cuartos",
+      "fecha": "2026-07-10T19:00:00.000Z",
+      "slotLocal": "W93",
+      "slotVisitante": "W94"
+    },
+    {
+      "numero": 99,
+      "fase": "cuartos",
+      "fecha": "2026-07-11T21:00:00.000Z",
+      "slotLocal": "W91",
+      "slotVisitante": "W92"
+    },
+    {
+      "numero": 100,
+      "fase": "cuartos",
+      "fecha": "2026-07-12T01:00:00.000Z",
+      "slotLocal": "W95",
+      "slotVisitante": "W96"
+    },
+    {
+      "numero": 101,
+      "fase": "semifinal",
+      "fecha": "2026-07-14T19:00:00.000Z",
+      "slotLocal": "W97",
+      "slotVisitante": "W98"
+    },
+    {
+      "numero": 102,
+      "fase": "semifinal",
+      "fecha": "2026-07-15T19:00:00.000Z",
+      "slotLocal": "W99",
+      "slotVisitante": "W100"
+    },
+    {
+      "fase": "tercer-puesto",
+      "fecha": "2026-07-18T21:00:00.000Z",
+      "slotLocal": "L101",
+      "slotVisitante": "L102"
+    },
+    {
+      "fase": "final",
+      "fecha": "2026-07-19T19:00:00.000Z",
+      "slotLocal": "W101",
+      "slotVisitante": "W102"
+    }
   ]
 }

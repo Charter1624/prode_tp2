@@ -1,8 +1,8 @@
-// Genera el fixture del Mundial 2026 a partir de los datos públicos de
-// OpenFootball (sin API key) y lo guarda como seeds/fixture2026.json en NUESTRO
-// formato (equipos + partidos de fase de grupos, traducidos al español y con el
-// código de país para la bandera). Las eliminatorias se omiten (vienen con
-// placeholders tipo "2A"/"Winner..." hasta que se sepan los clasificados).
+// Genera el fixture del Mundial 2026 desde los datos públicos de OpenFootball
+// (sin API key) y lo guarda como seeds/fixture2026.json en NUESTRO formato:
+//   - equipos: las 48 selecciones (nombre español + código de bandera + grupo)
+//   - partidos: los 72 de fase de grupos (con equipos reales)
+//   - eliminatorias: los 32 partidos del cuadro (con SLOTS: "2A", "W73", etc.)
 //
 // Correr con:  node scripts/generarFixture.js   (desde server/)
 
@@ -11,7 +11,7 @@ const path = require('path')
 
 const FUENTE = 'https://raw.githubusercontent.com/openfootball/worldcup.json/master/2026/worldcup.json'
 
-// Nombre (inglés, como viene de OpenFootball) -> { nombre español, código ISO para flagcdn }
+// Nombre (inglés, de OpenFootball) -> { nombre español, código ISO para flagcdn }
 const MAPA = {
   Mexico: { nombre: 'México', codigoPais: 'mx' },
   'South Africa': { nombre: 'Sudáfrica', codigoPais: 'za' },
@@ -63,6 +63,16 @@ const MAPA = {
   Panama: { nombre: 'Panamá', codigoPais: 'pa' },
 }
 
+// Ronda de OpenFootball -> nuestra fase
+const FASE_KO = {
+  'Round of 32': 'dieciseisavos',
+  'Round of 16': 'octavos',
+  'Quarter-final': 'cuartos',
+  'Semi-final': 'semifinal',
+  'Match for third place': 'tercer-puesto',
+  Final: 'final',
+}
+
 // "2026-06-11" + "13:00 UTC-6" -> ISO UTC
 function toISO(date, time) {
   const m = (time || '').match(/(\d{1,2}):(\d{2})\s*UTC([+-]\d{1,2})/)
@@ -78,43 +88,49 @@ async function main() {
   if (!res.ok) throw new Error(`No se pudo bajar el fixture (HTTP ${res.status})`)
   const data = await res.json()
 
-  const equiposMap = {} // nombre español -> { nombre, codigoPais, grupo }
+  const equiposMap = {}
   const partidos = []
+  const eliminatorias = []
   const faltantes = new Set()
 
   for (const m of data.matches) {
-    if (!m.group) continue // solo fase de grupos (las eliminatorias tienen placeholders)
-    const a = MAPA[m.team1]
-    const b = MAPA[m.team2]
-    if (!a) faltantes.add(m.team1)
-    if (!b) faltantes.add(m.team2)
-    if (!a || !b) continue
-
-    const grupo = m.group.replace('Group ', '').trim() // "Group A" -> "A"
-    equiposMap[a.nombre] = { nombre: a.nombre, codigoPais: a.codigoPais, grupo }
-    equiposMap[b.nombre] = { nombre: b.nombre, codigoPais: b.codigoPais, grupo }
-
-    partidos.push({
-      local: a.nombre,
-      visitante: b.nombre,
-      fecha: toISO(m.date, m.time),
-      grupo,
-      fase: 'grupos',
-    })
+    if (m.group) {
+      // Fase de grupos: equipos reales
+      const a = MAPA[m.team1]
+      const b = MAPA[m.team2]
+      if (!a) faltantes.add(m.team1)
+      if (!b) faltantes.add(m.team2)
+      if (!a || !b) continue
+      const grupo = m.group.replace('Group ', '').trim()
+      equiposMap[a.nombre] = { nombre: a.nombre, codigoPais: a.codigoPais, grupo }
+      equiposMap[b.nombre] = { nombre: b.nombre, codigoPais: b.codigoPais, grupo }
+      partidos.push({ local: a.nombre, visitante: b.nombre, fecha: toISO(m.date, m.time), grupo, fase: 'grupos' })
+    } else {
+      // Eliminatorias: slots predeterminados (se resuelven con los resultados)
+      const fase = FASE_KO[m.round]
+      if (!fase) continue
+      eliminatorias.push({
+        numero: m.num,
+        fase,
+        fecha: toISO(m.date, m.time),
+        slotLocal: m.team1,
+        slotVisitante: m.team2,
+      })
+    }
   }
 
   const equipos = Object.values(equiposMap).sort((x, y) =>
     x.grupo === y.grupo ? x.nombre.localeCompare(y.nombre) : x.grupo.localeCompare(y.grupo)
   )
 
-  const salida = { fuente: FUENTE, equipos, partidos }
+  const salida = { fuente: FUENTE, equipos, partidos, eliminatorias }
   const dest = path.join(__dirname, '..', 'seeds', 'fixture2026.json')
   fs.writeFileSync(dest, JSON.stringify(salida, null, 2))
 
-  console.log(`Equipos: ${equipos.length} | Partidos (grupos): ${partidos.length}`)
+  console.log(`Equipos: ${equipos.length} | Grupos: ${partidos.length} | Eliminatorias: ${eliminatorias.length}`)
   console.log(`Escrito en: ${dest}`)
   if (faltantes.size) {
-    console.log(`⚠️ Equipos sin mapear (se omitieron sus partidos): ${[...faltantes].join(', ')}`)
+    console.log(`⚠️ Equipos sin mapear: ${[...faltantes].join(', ')}`)
   }
 }
 
