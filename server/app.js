@@ -35,6 +35,7 @@ app.use(
 // Rutas
 app.get('/api/health', (req, res) => res.json({ ok: true, time: new Date() }))
 app.use('/api/auth', require('./routes/auth'))
+app.use('/api/equipos', require('./routes/equipos'))
 app.use('/api/partidos', require('./routes/partidos'))
 app.use('/api/pronosticos', require('./routes/pronosticos'))
 app.use('/api/ranking', require('./routes/ranking'))

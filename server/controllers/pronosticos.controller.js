@@ -29,10 +29,17 @@ async function crearOActualizar(req, res) {
 }
 
 // GET /api/pronosticos/mios — los pronósticos del usuario logueado, con los
-// datos del partido para mostrarlos en la app.
+// datos del partido y sus equipos (nombre + bandera) para mostrarlos en la app.
 async function mios(req, res) {
   const pronosticos = await Pronostico.find({ userId: req.user._id })
-    .populate('partidoId', 'equipoLocal equipoVisitante fecha fase estado golesLocal golesVisitante')
+    .populate({
+      path: 'partidoId',
+      select: 'equipoLocal equipoVisitante fecha fase estado golesLocal golesVisitante',
+      populate: [
+        { path: 'equipoLocal', select: 'nombre codigoPais' },
+        { path: 'equipoVisitante', select: 'nombre codigoPais' },
+      ],
+    })
     .sort({ createdAt: -1 })
 
   res.json(pronosticos)

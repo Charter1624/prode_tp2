@@ -13,16 +13,20 @@ automáticamente según los resultados que carga el admin.
 prode_tp2/
   server/   API REST — Node + Express + Mongoose (MongoDB) + JWT   ✅ listo
   client/   App — React Native + Expo                              ⏳ pendiente
-  docs/     Plan del proyecto (visión, arquitectura, modelo, etc.)
 ```
+
+## Modelo de datos
+
+- **Equipo** — selección (nombre, código de país para la bandera, grupo).
+- **Partido** — referencia dos `Equipo`, fecha, fase, goles, estado.
+- **User** — el jugador del prode (con rol `admin`).
+- **Pronostico** — relación N:M entre `User` y `Partido` con el marcador apostado + puntos.
 
 ## Backend (`server/`)
 
-API REST modular (capas `routes → controllers → services → models`, validación
-con Zod, JWT, seguridad con helmet/cors/rate-limit). Lógica de puntaje testeada
-con Jest.
-
-Puesta en marcha rápida:
+API REST modular por capas (`routes → controllers → services → models`),
+validación con Zod, JWT, seguridad con helmet/cors/rate-limit, y lógica de
+puntaje testeada con Jest.
 
 ```bash
 cd server
@@ -37,18 +41,11 @@ Detalle completo de endpoints y uso en [`server/README.md`](server/README.md).
 
 ## Frontend (`client/`)
 
-App en React Native + Expo (expo-router). Se conecta a la API a través de una
-capa `api.js` (URL base + token JWT). Ver el plan en
-[`docs/05-frontend.md`](docs/05-frontend.md).
-
-## Documentación
-
-El plan completo del proyecto está en [`docs/`](docs/): visión y alcance,
-arquitectura, modelo de datos, endpoints, testing, cronograma y el mapeo de cada
-unidad de la materia.
+App en React Native + Expo (expo-router). Se conectará a la API a través de una
+capa `api.js` (URL base + token JWT). Las banderas de los equipos se muestran
+con `flagcdn.com` a partir del código de país de cada `Equipo`.
 
 ## Estado
 
-- [x] Plan del proyecto
-- [x] Backend (auth + partidos + pronósticos + ranking + seeder + tests)
+- [x] Backend (equipos + partidos + pronósticos + ranking + auth + seeder + tests)
 - [ ] Frontend (app Expo conectada a la API)

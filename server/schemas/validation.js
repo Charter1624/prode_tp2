@@ -1,5 +1,6 @@
 const { z } = require('zod')
 const { FASES } = require('../models/Partido')
+const { GRUPOS } = require('../models/Equipo')
 
 // Schemas de validación con Zod. El middleware validate(schema) los corre
 // contra req.body y, si pasan, reemplaza req.body por los datos parseados.
@@ -21,13 +22,28 @@ const loginSchema = z.object({
   password: z.string().min(1),
 })
 
-// --- Partidos (admin) -----------------------------------------------------
-const crearPartidoSchema = z.object({
-  equipoLocal: z.string().min(1).max(60),
-  equipoVisitante: z.string().min(1).max(60),
-  fecha: z.coerce.date(), // acepta ISO string y lo convierte a Date
-  fase: z.enum(FASES).optional(),
+// --- Equipos (admin) ------------------------------------------------------
+const crearEquipoSchema = z.object({
+  nombre: z.string().min(2).max(60),
+  // ISO alpha-2 (ar, br, mx) o casos compuestos tipo gb-eng.
+  codigoPais: z
+    .string()
+    .regex(/^[a-z]{2}(-[a-z]{2,3})?$/i, 'código de país inválido (ej: ar, br, gb-eng)'),
+  grupo: z.enum(GRUPOS).optional(),
 })
+
+// --- Partidos (admin) -----------------------------------------------------
+const crearPartidoSchema = z
+  .object({
+    equipoLocal: objectId,
+    equipoVisitante: objectId,
+    fecha: z.coerce.date(), // acepta ISO string y lo convierte a Date
+    fase: z.enum(FASES).optional(),
+  })
+  .refine((d) => d.equipoLocal !== d.equipoVisitante, {
+    message: 'El equipo local y el visitante no pueden ser el mismo',
+    path: ['equipoVisitante'],
+  })
 
 const resultadoSchema = z.object({
   golesLocal: goles,
@@ -44,6 +60,7 @@ const pronosticoSchema = z.object({
 module.exports = {
   registerSchema,
   loginSchema,
+  crearEquipoSchema,
   crearPartidoSchema,
   resultadoSchema,
   pronosticoSchema,
