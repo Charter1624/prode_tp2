@@ -4,22 +4,35 @@ const { GRUPOS } = require('../models/Equipo')
 
 // Schemas de validación con Zod. El middleware validate(schema) los corre
 // contra req.body y, si pasan, reemplaza req.body por los datos parseados.
-// Clave de seguridad: z.object() DESCARTA las claves de más, así que aunque
-// alguien mande { admin: true } en el register, nunca llega al modelo.
+// z.object() DESCARTA las claves de más (no se puede colar admin:true en register).
 
 const objectId = z.string().regex(/^[0-9a-fA-F]{24}$/, 'id inválido')
 const goles = z.number().int().min(0).max(30)
+const email = z.string().trim().toLowerCase().email()
 
 // --- Auth -----------------------------------------------------------------
 const registerSchema = z.object({
   name: z.string().min(2).max(80),
-  email: z.string().trim().toLowerCase().email(),
+  email,
   password: z.string().min(6).max(100),
 })
 
 const loginSchema = z.object({
-  email: z.string().trim().toLowerCase().email(),
+  email,
   password: z.string().min(1),
+})
+
+const forgotSchema = z.object({ email })
+
+const resetSchema = z.object({
+  email,
+  codigo: z.string().trim().length(6),
+  password: z.string().min(6).max(100),
+})
+
+// Foto de perfil (data URI o URL). Cap de tamaño para no recibir imágenes enormes.
+const actualizarPerfilSchema = z.object({
+  profilePic: z.string().max(700000),
 })
 
 // --- Equipos (admin) ------------------------------------------------------
@@ -68,6 +81,9 @@ const unirseLigaSchema = z.object({
 module.exports = {
   registerSchema,
   loginSchema,
+  forgotSchema,
+  resetSchema,
+  actualizarPerfilSchema,
   crearEquipoSchema,
   crearPartidoSchema,
   resultadoSchema,

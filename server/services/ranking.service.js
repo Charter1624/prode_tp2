@@ -25,7 +25,6 @@ async function obtenerRanking(userIds = null) {
     {
       $project: {
         name: 1,
-        profilePic: 1,
         puntos: { $sum: '$pronosticos.puntos' },
         // exactos = cuántos pronósticos valieron el máximo; sirve de desempate.
         exactos: {
