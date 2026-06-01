@@ -13,12 +13,12 @@ const goles = z.number().int().min(0).max(30)
 // --- Auth -----------------------------------------------------------------
 const registerSchema = z.object({
   name: z.string().min(2).max(80),
-  email: z.string().email(),
+  email: z.string().trim().toLowerCase().email(),
   password: z.string().min(6).max(100),
 })
 
 const loginSchema = z.object({
-  email: z.string().email(),
+  email: z.string().trim().toLowerCase().email(),
   password: z.string().min(1),
 })
 
