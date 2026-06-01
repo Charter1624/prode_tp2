@@ -24,5 +24,6 @@ router.post('/', validate(crearLigaSchema), asyncHandler(ctrl.crear))
 router.post('/unirse', unirseLimiter, validate(unirseLigaSchema), asyncHandler(ctrl.unirse))
 router.get('/mias', asyncHandler(ctrl.mias))
 router.get('/:id/ranking', asyncHandler(ctrl.ranking))
+router.delete('/:id', asyncHandler(ctrl.borrar))
 
 module.exports = router

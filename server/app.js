@@ -32,13 +32,13 @@ app.use(
   })
 )
 
-// Rutas
+// Rutas. El ranking general NO se expone público (filtraría a todos los usuarios):
+// el ranking es por liga y solo lo ven sus miembros (ver routes/ligas).
 app.get('/api/health', (req, res) => res.json({ ok: true, time: new Date() }))
 app.use('/api/auth', require('./routes/auth'))
 app.use('/api/equipos', require('./routes/equipos'))
 app.use('/api/partidos', require('./routes/partidos'))
 app.use('/api/pronosticos', require('./routes/pronosticos'))
-app.use('/api/ranking', require('./routes/ranking'))
 app.use('/api/ligas', require('./routes/ligas'))
 
 // Error handler central. Va al final, con los 4 argumentos (err, req, res, next)

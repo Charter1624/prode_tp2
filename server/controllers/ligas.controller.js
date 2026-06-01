@@ -18,11 +18,10 @@ function esMiembro(liga, userId) {
   return liga.miembros.some((m) => m.equals(userId))
 }
 
-// POST /api/ligas — crea una liga; el creador queda como primer miembro.
+// POST /api/ligas — crea una liga; el creador queda como dueño y primer miembro.
 async function crear(req, res) {
   const { nombre } = req.body
 
-  // Genera un código único (reintenta ante una colisión, muy improbable).
   let codigo
   for (let i = 0; i < 5; i++) {
     codigo = generarCodigo()
@@ -71,16 +70,35 @@ async function ranking(req, res) {
   const liga = await Liga.findById(id)
   if (!liga) return res.status(404).json({ error: 'Liga no encontrada' })
 
-  // Seguridad: solo un miembro ve el ranking de su liga.
   if (!esMiembro(liga, req.user._id)) {
     return res.status(403).json({ error: 'No sos miembro de esta liga' })
   }
 
   const tabla = await obtenerRanking(liga.miembros)
   res.json({
-    liga: { _id: liga._id, nombre: liga.nombre, codigo: liga.codigo },
+    // esCreador le dice a la app si mostrar el botón de eliminar (igual se valida en el server).
+    liga: { _id: liga._id, nombre: liga.nombre, codigo: liga.codigo, esCreador: liga.creador.equals(req.user._id) },
     ranking: tabla,
   })
 }
 
-module.exports = { crear, unirse, mias, ranking }
+// DELETE /api/ligas/:id — eliminar la liga. SOLO el creador (o el admin global).
+async function borrar(req, res) {
+  const { id } = req.params
+  if (!mongoose.isValidObjectId(id)) {
+    return res.status(404).json({ error: 'Liga no encontrada' })
+  }
+
+  const liga = await Liga.findById(id)
+  if (!liga) return res.status(404).json({ error: 'Liga no encontrada' })
+
+  const esCreador = liga.creador.equals(req.user._id)
+  if (!esCreador && !req.user.admin) {
+    return res.status(403).json({ error: 'Solo el creador de la liga puede eliminarla' })
+  }
+
+  await liga.deleteOne()
+  res.json({ mensaje: 'Liga eliminada' })
+}
+
+module.exports = { crear, unirse, mias, ranking, borrar }
