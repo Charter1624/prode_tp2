@@ -12,5 +12,6 @@ router.use(authMiddleware)
 
 router.post('/', validate(pronosticoSchema), asyncHandler(ctrl.crearOActualizar))
 router.get('/mios', asyncHandler(ctrl.mios))
+router.delete('/:id', asyncHandler(ctrl.borrar))
 
 module.exports = router
