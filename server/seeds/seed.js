@@ -4,6 +4,7 @@ const User = require('../models/User')
 const Equipo = require('../models/Equipo')
 const Partido = require('../models/Partido')
 const Pronostico = require('../models/Pronostico')
+const Liga = require('../models/Liga')
 const { calcularPuntos } = require('../services/puntaje')
 const logger = require('../services/logger')
 
@@ -86,6 +87,7 @@ async function seed() {
     Equipo.deleteMany({}),
     Partido.deleteMany({}),
     Pronostico.deleteMany({}),
+    Liga.deleteMany({}),
   ])
 
   // 1. Equipos.
